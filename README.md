@@ -15,7 +15,7 @@ El proyecto de desarrollo de un Sistema de Gestión de Farmacia en Java tiene co
 ## 🧰 Tecnologías utilizadas en el deasorro del proyecto
 - **Lenguaje:** Java 21  
 - **IDE usado:** IntelliJ IDEA
-
+- **Framework de IU:** JavaFX 21
 ## 📚 Contexto del proyecto
 Este sistema fue desarrollado como proyecto para la materia **Programación Orientada a Objetos**, con el objetivo de aplicar lo aprendido de la materia en el proyecto.
 
