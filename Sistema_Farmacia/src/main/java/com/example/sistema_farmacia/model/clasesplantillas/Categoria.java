@@ -1,23 +1,40 @@
 package com.example.sistema_farmacia.model.clasesplantillas;
 
-import java.util.ArrayList;
-
 public class Categoria {
     private String categoriaNombre;
     private String descripcion;
 
-    // Constructor
     public Categoria(String categoriaNombre) {
         this.categoriaNombre = categoriaNombre;
+        this.descripcion = "";
     }
 
-    // Métodos get y set
+    public Categoria(String categoriaNombre, String descripcion) {
+        this.categoriaNombre = categoriaNombre;
+        this.descripcion = descripcion;
+    }
+
     public String getCategoriaNombre() {
         return categoriaNombre;
     }
 
-    public ArrayList<Producto> getProductos() {
-        // Simulación: Lógica para devolver productos de esta categoría.
-        return new ArrayList<Producto>();
+    public void setCategoriaNombre(String categoriaNombre) {
+        this.categoriaNombre = categoriaNombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    @Override
+    public String toString() {
+        return "Categoria{" +
+                "categoriaNombre='" + categoriaNombre + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                '}';
     }
 }

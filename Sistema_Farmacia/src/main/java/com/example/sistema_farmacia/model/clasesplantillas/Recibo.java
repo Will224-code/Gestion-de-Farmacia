@@ -5,8 +5,10 @@ import java.util.ArrayList;
 
 public class Recibo {
     private String idRecibo;
+    private LocalDate fecha;
     private Venta venta;
     private double total;
+    private double descuentoAplicado;
     private ArrayList<Producto> productos;
 
     // Constructor
@@ -17,17 +19,29 @@ public class Recibo {
         this.productos = venta.getVenta();
     }
 
-    // Lógica para generar ID del recibo
-    private String generarIdRecibo() {
-        return "REC-" + System.currentTimeMillis();
+    public void listarProductos() {
+        for (Producto producto : productos) {
+            System.out.println(producto);
+        }
     }
 
     public String generarContenido() {
-        // Lógica para formatear el contenido del recibo
-        return "Contenido del recibo: ID " + idRecibo;
+        return idRecibo;
+    }
+
+    public String generarIdRecibo() {
+        return idRecibo;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
     }
 
     public Venta getVenta() {
         return venta;
+    }
+
+    public double getTotal() {
+        return total;
     }
 }
