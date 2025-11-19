@@ -5,6 +5,7 @@ module com.example.sistema_farmacia {
     requires org.controlsfx.controls;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
+    requires com.example.sistema_farmacia;
 
     opens com.example.sistema_farmacia to javafx.fxml;
     exports com.example.sistema_farmacia;

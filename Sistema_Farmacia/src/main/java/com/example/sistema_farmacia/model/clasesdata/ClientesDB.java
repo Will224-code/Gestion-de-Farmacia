@@ -1,29 +1,39 @@
-package com.example.sistema_farmacia.model.clasesdata;
+package model.clasesdata;
 
-import com.example.sistema_farmacia.model.clasesplantillas.Cliente;
+import model.clasesplantillas.Cliente;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ClientesDB {
-    // Colección para almacenar los objetos Cliente, usando el ID como clave
+    // Atributo principal: Mapa que almacena clientes usando el nombre como clave
     private Map<String, Cliente> listaClientes;
 
+    // Constructor ClientesDB()
     public ClientesDB() {
         this.listaClientes = new HashMap<>();
     }
 
-    // Agregar un cliente al repositorio
+    // Métodos Principales
+
     public void agregarCliente(Cliente cliente) {
-        listaClientes.put(cliente.generarID(), cliente);
+        // Agrega el cliente usando su nombre como clave
+        listaClientes.put(cliente.getNombre(), cliente);
     }
 
-    // Eliminar un cliente por su ID
-    public void eliminarCliente(String id) {
-        listaClientes.remove(id);
+    public void eliminarCliente(String nombre) {
+        // Elimina el cliente de la lista por su nombre
+        listaClientes.remove(nombre);
     }
 
-    // Retorna el mapa completo
+    public void modificarCliente(String nombreViejo, Cliente cliente) {
+        // Elimina el cliente anterior y agrega el objeto Cliente modificado
+        listaClientes.remove(nombreViejo);
+        listaClientes.put(cliente.getNombre(), cliente);
+    }
+
     public Map<String, Cliente> getListaClientes() {
+        // Retorna el Map<> completo
         return listaClientes;
     }
 }

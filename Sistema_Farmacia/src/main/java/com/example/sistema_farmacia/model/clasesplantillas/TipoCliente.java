@@ -1,4 +1,4 @@
-package com.example.sistema_farmacia.model.clasesplantillas;
+package model.clasesplantillas;
 
 public enum TipoCliente {
     // Enumeración para diferenciar perfiles de clientes
