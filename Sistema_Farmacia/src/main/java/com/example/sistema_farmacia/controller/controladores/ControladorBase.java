@@ -7,10 +7,8 @@ import java.util.Optional;
 //Clase base para todos los controladores del sistema.
 public abstract class ControladorBase {
 
-    /**
-     * Muestra un mensaje informativo al usuario
-     * @param mensaje El mensaje a mostrar
-     */
+
+     //Muestra un mensaje informativo al usuario
     protected void mostrarMensaje(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Información");
@@ -19,10 +17,8 @@ public abstract class ControladorBase {
         alert.showAndWait();
     }
 
-    /**
-     * Muestra un mensaje de error al usuario
-     * @param mensajeError El mensaje de error a mostrar
-     */
+
+     //Muestra un mensaje de error al usuario
     protected void mostrarAlertaError(String mensajeError) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -31,10 +27,8 @@ public abstract class ControladorBase {
         alert.showAndWait();
     }
 
-    /**
-     * Muestra una advertencia al usuario
-     * @param mensajeAdvertencia El mensaje de advertencia
-     */
+
+     //Muestra una advertencia al usuario
     protected void mostrarAdvertencia(String mensajeAdvertencia) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Advertencia");
@@ -43,11 +37,7 @@ public abstract class ControladorBase {
         alert.showAndWait();
     }
 
-    /**
-     * Muestra un diálogo de confirmación y devuelve la respuesta
-     * @param mensaje El mensaje de confirmación
-     * @return true si el usuario aceptó, false si canceló
-     */
+    //Muestra un diálogo de confirmación y devuelve la respuesta
     protected boolean mostrarConfirmacion(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmación");
@@ -58,10 +48,8 @@ public abstract class ControladorBase {
         return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
-    /**
-     * Muestra un mensaje de éxito (información con estilo positivo)
-     * @param mensaje El mensaje de éxito
-     */
+
+     //Muestra un mensaje de éxito (información con estilo positivo)
     protected void mostrarExito(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Éxito");

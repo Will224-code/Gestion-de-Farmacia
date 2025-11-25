@@ -21,45 +21,25 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 
-/**
- * Clase utilitaria para centralizar TODAS las validaciones del sistema.
- * Contiene métodos estáticos que lanzan excepciones personalizadas.
- * Cubre todos los módulos: Productos, Clientes, Ventas, Recibos, Reportes, Categorías.
- */
+
 public class Verificador {
 
     // ============ VALIDACIONES BÁSICAS ============
-
-    /**
-     * Verifica que un texto no esté vacío
-     * @param texto El texto a verificar
-     * @param nombreCampo Nombre del campo para el mensaje de error
-     * @throws CampoVacioException si el texto está vacío o null
-     */
+     //Verifica que un texto no esté vacio
     public static void verificarNoVacio(String texto, String nombreCampo) throws CampoVacioException {
         if (texto == null || texto.trim().isEmpty()) {
             throw new CampoVacioException("El campo '" + nombreCampo + "' no puede estar vacío");
         }
     }
 
-    /**
-     * Verifica que un objeto no sea null
-     * @param objeto El objeto a verificar
-     * @param nombreCampo Nombre del campo
-     * @throws CampoVacioException si el objeto es null
-     */
+     //Verifica que un objeto no sea null
     public static void verificarNoNulo(Object objeto, String nombreCampo) throws CampoVacioException {
         if (objeto == null) {
             throw new CampoVacioException("El campo '" + nombreCampo + "' es requerido");
         }
     }
 
-    /**
-     * Verifica que un texto sea convertible a número decimal
-     * @param texto El texto a verificar
-     * @param nombreCampo Nombre del campo para el mensaje de error
-     * @throws DatoNoNumericoException si no es un número válido
-     */
+    // Verifica que un texto sea convertible a número decimal
     public static void verificarNumerico(String texto, String nombreCampo) throws DatoNoNumericoException {
         try {
             Double.parseDouble(texto.trim());
@@ -68,12 +48,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que un texto sea convertible a entero
-     * @param texto El texto a verificar
-     * @param nombreCampo Nombre del campo para el mensaje de error
-     * @throws DatoNoNumericoException si no es un entero válido
-     */
+    //Verifica que un texto sea convertible a entero
     public static void verificarEntero(String texto, String nombreCampo) throws DatoNoNumericoException {
         try {
             Integer.parseInt(texto.trim());
@@ -94,12 +69,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que un número entero sea positivo
-     * @param numero El número a verificar
-     * @param nombreCampo Nombre del campo para el mensaje de error
-     * @throws DatoNegativoException si el número es negativo
-     */
+    // Verifica que un número entero sea positivo
     public static void verificarPositivo(int numero, String nombreCampo) throws DatoNegativoException {
         if (numero < 0) {
             throw new DatoNegativoException("El campo '" + nombreCampo + "' no puede ser negativo. Valor: " + numero);
@@ -108,13 +78,7 @@ public class Verificador {
 
     // ============ VALIDACIONES DE DUPLICADOS ============
 
-    /**
-     * Verifica que no exista un duplicado
-     * @param existe true si ya existe el elemento
-     * @param tipoDato Tipo de dato duplicado (ej: "código", "nombre")
-     * @param valor Valor duplicado
-     * @throws DuplicadoException si existe el elemento
-     */
+    // Verifica que no exista un duplicado
     public static void verificarDuplicado(boolean existe, String tipoDato, String valor) throws DuplicadoException {
         if (existe) {
             throw new DuplicadoException("Ya existe un registro con " + tipoDato + ": " + valor);
@@ -123,13 +87,7 @@ public class Verificador {
 
     // ============ VALIDACIONES DE EXISTENCIA ============
 
-    /**
-     * Verifica que un objeto exista (no sea null)
-     * @param objeto El objeto a verificar
-     * @param tipoEntidad Tipo de entidad (ej: "Producto", "Cliente")
-     * @param identificador Identificador usado en la búsqueda
-     * @throws NoEncontradoException si el objeto es null
-     */
+    // Verifica que un objeto exista (no sea null)
     public static void verificarExiste(Object objeto, String tipoEntidad, String identificador) throws NoEncontradoException {
         if (objeto == null) {
             throw new NoEncontradoException(tipoEntidad + " no encontrado con identificador: " + identificador);
@@ -138,11 +96,7 @@ public class Verificador {
 
     // ============ VALIDACIONES ESPECÍFICAS DE PRODUCTOS ============
 
-    /**
-     * Verifica que la fecha de caducidad sea válida (posterior a hoy)
-     * @param fechaCaducidad Fecha a verificar
-     * @throws FechaCaducidadException si la fecha ya pasó o es null
-     */
+   //Verifica que la fecha de caducidad sea válida (posterior a hoy)
     public static void verificarFechaCaducidad(LocalDate fechaCaducidad) throws FechaCaducidadException {
         if (fechaCaducidad == null) {
             throw new FechaCaducidadException("La fecha de caducidad no puede ser nula");
@@ -154,11 +108,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que un producto no haya caducado
-     * @param producto El producto a verificar
-     * @throws FechaCaducidadException si el producto está vencido
-     */
+    //Verifica que un producto no haya caducado
     public static void verificarProductoNoCaducado(Producto producto) throws FechaCaducidadException {
         if (producto.getFechaCaducidad().isBefore(LocalDate.now())) {
             throw new FechaCaducidadException(
@@ -168,12 +118,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que haya stock suficiente
-     * @param producto El producto a verificar
-     * @param cantidadSolicitada Cantidad que se desea
-     * @throws ProductoAgotadoException si no hay suficiente stock
-     */
+   // Verifica que haya stock suficiente
     public static void verificarStock(Producto producto, int cantidadSolicitada) throws ProductoAgotadoException {
         if (producto.getUnidadesExi() < cantidadSolicitada) {
             throw new ProductoAgotadoException(
@@ -183,23 +128,14 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que el producto tenga al menos una unidad disponible
-     * @param producto El producto a verificar
-     * @throws ProductoAgotadoException si no hay stock
-     */
+    // Verifica que el producto tenga al menos una unidad disponible
     public static void verificarStockDisponible(Producto producto) throws ProductoAgotadoException {
         if (producto.getUnidadesExi() <= 0) {
             throw new ProductoAgotadoException("El producto '" + producto.getNombre() + "' está agotado");
         }
     }
 
-    /**
-     * Verifica que una categoría exista
-     * @param categoria La categoría a verificar
-     * @param nombreCategoria Nombre de la categoría buscada
-     * @throws CategoriaInexistenteException si la categoría no existe
-     */
+    //Verifica que una categoría exista
     public static void verificarCategoriaExiste(Categoria categoria, String nombreCategoria) throws CategoriaInexistenteException {
         if (categoria == null) {
             throw new CategoriaInexistenteException(
@@ -211,14 +147,7 @@ public class Verificador {
 
     // ============ VALIDACIONES DE RANGOS ============
 
-    /**
-     * Verifica que un número esté dentro de un rango
-     * @param valor Valor a verificar
-     * @param minimo Valor mínimo permitido
-     * @param maximo Valor máximo permitido
-     * @param nombreCampo Nombre del campo
-     * @throws DatoNegativoException si está fuera de rango
-     */
+    // Verifica que un número esté dentro de un rango
     public static void verificarRango(double valor, double minimo, double maximo, String nombreCampo) throws DatoNegativoException {
         if (valor < minimo || valor > maximo) {
             throw new DatoNegativoException(
@@ -227,14 +156,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que un entero esté dentro de un rango
-     * @param valor Valor a verificar
-     * @param minimo Valor mínimo permitido
-     * @param maximo Valor máximo permitido
-     * @param nombreCampo Nombre del campo
-     * @throws DatoNegativoException si está fuera de rango
-     */
+    //Verifica que un entero esté dentro de un rango
     public static void verificarRango(int valor, int minimo, int maximo, String nombreCampo) throws DatoNegativoException {
         if (valor < minimo || valor > maximo) {
             throw new DatoNegativoException(
@@ -245,12 +167,7 @@ public class Verificador {
 
     // ============ VALIDACIONES DE VENTAS ============
 
-    /**
-     * Verifica que se haya proporcionado una receta cuando es obligatoria
-     * @param tieneReceta true si se proporcionó receta
-     * @param nombreProducto Nombre del producto que requiere receta
-     * @throws RecetaObligatoriaException si falta la receta
-     */
+   //Verifica que se haya proporcionado una receta cuando es obligatoria
     public static void verificarRecetaObligatoria(boolean tieneReceta, String nombreProducto) throws RecetaObligatoriaException {
         if (!tieneReceta) {
             throw new RecetaObligatoriaException(
@@ -260,13 +177,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que un descuento sea aplicable
-     * @param descuento El porcentaje de descuento
-     * @param esAplicable true si el descuento puede aplicarse según las reglas de negocio
-     * @param razon Razón por la que no es aplicable (si es el caso)
-     * @throws DescuentoNoAplicableException si el descuento no puede aplicarse
-     */
+    //Verifica que un descuento sea aplicable
     public static void verificarDescuentoAplicable(double descuento, boolean esAplicable, String razon) throws DescuentoNoAplicableException {
         if (!esAplicable) {
             throw new DescuentoNoAplicableException(
@@ -278,12 +189,7 @@ public class Verificador {
 
     // ============ VALIDACIONES DE REPORTES ============
 
-    /**
-     * Verifica que haya datos para generar un reporte
-     * @param datos Colección de datos
-     * @param tipoReporte Tipo de reporte (ventas, productos, etc.)
-     * @throws ReporteSinDatosException si no hay datos
-     */
+    // Verifica que haya datos para generar un reporte
     public static void verificarDatosReporte(Collection<?> datos, String tipoReporte) throws ReporteSinDatosException {
         if (datos == null || datos.isEmpty()) {
             throw new ReporteSinDatosException(
@@ -293,12 +199,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que una fecha sea válida
-     * @param fecha La fecha a verificar
-     * @param nombreCampo Nombre del campo de fecha
-     * @throws FechaInvalidaException si la fecha es null o inválida
-     */
+    //Verifica que una fecha sea válida
     public static void verificarFechaValida(LocalDate fecha, String nombreCampo) throws FechaInvalidaException {
         if (fecha == null) {
             throw new FechaInvalidaException(
@@ -308,12 +209,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que un rango de fechas sea válido
-     * @param fechaInicio Fecha de inicio
-     * @param fechaFin Fecha de fin
-     * @throws FechaInvalidaException si el rango es inválido
-     */
+   //Verifica que un rango de fechas sea válido
     public static void verificarRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) throws FechaInvalidaException {
         if (fechaInicio == null || fechaFin == null) {
             throw new FechaInvalidaException("Las fechas de inicio y fin son requeridas");
@@ -325,13 +221,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que la exportación de un archivo fue exitosa
-     * @param exitosa true si la exportación fue exitosa
-     * @param rutaArchivo Ruta del archivo
-     * @param error Mensaje de error si falló
-     * @throws ExportacionFallidaException si la exportación falló
-     */
+    //Verifica que la exportación de un archivo fue exitosa
     public static void verificarExportacionExitosa(boolean exitosa, String rutaArchivo, String error) throws ExportacionFallidaException {
         if (!exitosa) {
             throw new ExportacionFallidaException(
@@ -343,14 +233,7 @@ public class Verificador {
 
     // ============ VALIDACIONES DE RECIBOS Y RELACIONES ============
 
-    /**
-     * Verifica que exista una relación válida entre dos entidades
-     * @param relacionExiste true si la relación existe
-     * @param tipoEntidad1 Primera entidad (ej: "Recibo")
-     * @param tipoEntidad2 Segunda entidad (ej: "Venta")
-     * @param identificador Identificador usado
-     * @throws RelacionNoCompatibleException si no existe la relación
-     */
+    //Verifica que exista una relación válida entre dos entidades
     public static void verificarRelacionCompatible(boolean relacionExiste, String tipoEntidad1,
                                                    String tipoEntidad2, String identificador) throws RelacionNoCompatibleException {
         if (!relacionExiste) {
@@ -364,13 +247,7 @@ public class Verificador {
 
     // ============ VALIDACIONES GENERALES DE OPERACIONES ============
 
-    /**
-     * Verifica que una operación sea permitida
-     * @param esPermitida true si la operación está permitida
-     * @param nombreOperacion Nombre de la operación
-     * @param razon Razón por la que no es permitida
-     * @throws OperacionNoPermitidaException si la operación no está permitida
-     */
+    // Verifica que una operación sea permitida
     public static void verificarOperacionPermitida(boolean esPermitida, String nombreOperacion,
                                                    String razon) throws OperacionNoPermitidaException {
         if (!esPermitida) {
@@ -381,14 +258,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que la operación se realice dentro del horario permitido
-     * @param horaActual Hora actual
-     * @param horaInicio Hora de inicio permitida
-     * @param horaFin Hora de fin permitida
-     * @param nombreOperacion Nombre de la operación
-     * @throws OperacionFueraDeHorarioException si está fuera de horario
-     */
+    //Verifica que la operación se realice dentro del horario permitido
     public static void verificarHorarioOperacion(LocalTime horaActual, LocalTime horaInicio,
                                                  LocalTime horaFin, String nombreOperacion) throws OperacionFueraDeHorarioException {
         if (horaActual.isBefore(horaInicio) || horaActual.isAfter(horaFin)) {
@@ -399,12 +269,7 @@ public class Verificador {
         }
     }
 
-    /**
-     * Verifica que no haya conflictos de acceso concurrente
-     * @param recursoDisponible true si el recurso está disponible
-     * @param nombreRecurso Nombre del recurso
-     * @throws AccesoConcurrenteException si hay conflicto
-     */
+    //Verifica que no haya conflictos de acceso concurrente
     public static void verificarAccesoConcurrente(boolean recursoDisponible, String nombreRecurso) throws AccesoConcurrenteException {
         if (!recursoDisponible) {
             throw new AccesoConcurrenteException(
@@ -416,25 +281,14 @@ public class Verificador {
 
     // ============ VALIDACIONES DE COLECCIONES ============
 
-    /**
-     * Verifica que una colección no esté vacía
-     * @param coleccion La colección a verificar
-     * @param nombreColeccion Nombre de la colección
-     * @throws CampoVacioException si la colección está vacía
-     */
+   //Verifica que una colección no esté vacía
     public static void verificarColeccionNoVacia(Collection<?> coleccion, String nombreColeccion) throws CampoVacioException {
         if (coleccion == null || coleccion.isEmpty()) {
             throw new CampoVacioException("La lista de " + nombreColeccion + " no puede estar vacía");
         }
     }
 
-    /**
-     * Verifica que una colección tenga un tamaño mínimo
-     * @param coleccion La colección a verificar
-     * @param tamañoMinimo Tamaño mínimo requerido
-     * @param nombreColeccion Nombre de la colección
-     * @throws CampoVacioException si no cumple el tamaño mínimo
-     */
+    //Verifica que una colección tenga un tamaño mínimo
     public static void verificarTamañoMinimo(Collection<?> coleccion, int tamañoMinimo,
                                              String nombreColeccion) throws CampoVacioException {
         if (coleccion == null || coleccion.size() < tamañoMinimo) {
