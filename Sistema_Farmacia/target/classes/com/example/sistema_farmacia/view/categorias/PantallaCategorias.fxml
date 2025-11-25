@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="18"
+      alignment="TOP_LEFT"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.sistema_farmacia.controller.controladores.PantallaCategoriasController"
+      stylesheets="@../estilos/EstilosCategorias.css"
+      VBox.vgrow="ALWAYS"
+      style="-fx-padding: 55 0 0 350;">
+
+    <!-- Menú de botones internos -->
+    <HBox spacing="14" alignment="CENTER_LEFT">
+        <Button fx:id="btnAgregar" text="Agregar"/>
+        <Button fx:id="btnListar" text="Listar"/>
+    </HBox>
+
+    <!-- Caja central amarilla y grande, alineada a la izquierda -->
+    <VBox fx:id="areaSubpagina"
+          styleClass="area-subpagina"
+          alignment="CENTER_LEFT"
+          VBox.vgrow="ALWAYS"
+          prefWidth="800"
+          prefHeight="600">
+
+        <GridPane fx:id="formularioAgregar"
+                  hgap="16" vgap="26"
+                  alignment="CENTER">
+            <Label text="Nombre de la categoría:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="txtNombre" prefWidth="520" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Label text="Descripcion:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextArea fx:id="txtDescripcion" prefHeight="140" prefWidth="520" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <Button fx:id="btnAceptar" text="Aceptar" prefWidth="170" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+        </GridPane>
+    </VBox>
+</VBox>
+

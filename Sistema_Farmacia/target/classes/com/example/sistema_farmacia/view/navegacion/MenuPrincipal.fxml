@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.sistema_farmacia.controller.controladores.MenuPrincipalController"
+            prefHeight="60.0" prefWidth="700.0"
+            stylesheets="@../estilos/EstilosNavegacion.css"
+             styleClass="fondo-principal">
+    <HBox spacing="14.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <Button fx:id="btnVentas" text="Ventas"      styleClass="menu-superior"/>
+        <Button fx:id="btnCategorias" text="Categorías" styleClass="menu-superior"/>
+        <Button fx:id="btnClientes" text="Clientes"  styleClass="menu-superior"/>
+        <Button fx:id="btnProductos" text="Productos" styleClass="menu-superior"/>
+        <Button fx:id="btnRecibos" text="Recibos"    styleClass="menu-superior"/>
+        <Button fx:id="btnReportes" text="Reportes"  styleClass="menu-superior"/>
+        <Button fx:id="btnUsuariosSesion" text="Usuarios/Sesión"  styleClass="menu-superior"/>
+    </HBox>
+</AnchorPane>

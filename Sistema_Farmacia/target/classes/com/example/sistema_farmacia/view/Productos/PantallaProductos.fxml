@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="18"
+      alignment="TOP_LEFT"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.sistema_farmacia.controller.controladores.PantallaProductosController"
+      stylesheets="@../estilos/EstilosProductos.css"
+      VBox.vgrow="ALWAYS"
+      style="-fx-padding: 55 0 0 350;">
+    <HBox spacing="14" alignment="CENTER_LEFT">
+        <Button fx:id="btnAgregar" text="Agregar" />
+        <Button fx:id="btnListar" text="Listar" />
+    </HBox>
+    <VBox fx:id="areaSubpagina"
+          styleClass="area-subpagina"
+          alignment="CENTER_LEFT"
+          VBox.vgrow="ALWAYS"
+          prefWidth="800"
+          prefHeight="600">
+        <!-- Aquí el controlador pondrá dinámicamente el formulario con checkboxes o la tabla/listado -->
+    </VBox>
+</VBox>

@@ -1,0 +1,65 @@
+.vbox {
+    -fx-background-color: linear-gradient(to bottom, #f2f7fa 88%, #e0e5ef 100%);
+    -fx-padding: 34 18 18 18;
+}
+
+/* BOTONES farmacia/menú: azules modernos */
+.button {
+    -fx-background-color: linear-gradient(to bottom, #e3f2fd 88%, #98bbdf 100%);
+    -fx-text-fill: #22659c;
+    -fx-font-size: 18px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-radius: 18;
+    -fx-border-color: #4a90c2;
+    -fx-border-width: 2;
+    -fx-border-radius: 18;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-padding: 10 36 10 36;
+    -fx-effect: dropshadow(gaussian, #b8cbe5, 3, 0.12, 0, 1.5);
+    -fx-min-width: 120px;
+    -fx-min-height: 40px;
+    -fx-transition: all 0.2s;
+}
+.button:hover {
+    -fx-background-color: linear-gradient(to top, #b8d5f6 90%, #e3f2fd 100%);
+    -fx-text-fill: #133a62;
+}
+.button:pressed {
+    -fx-background-color: #8fb7e4;
+    -fx-text-fill: #e3f2fd;
+}
+
+/* BOTÓN "Aceptar": un azul diferente, pero a juego */
+#btnAceptar {
+    -fx-background-color: linear-gradient(to right, #a7d2fa 82%, #5bc2ff 130%);
+    -fx-text-fill: #155099;
+    -fx-border-width: 2;
+    -fx-border-color: #359ad6;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+}
+#btnAceptar:hover {
+    -fx-background-color: linear-gradient(to left, #5bc2ff 50%, #a7d2fa 100%);
+    -fx-text-fill: #11365c;
+}
+
+/* Etiquetas (labels) */
+.label {
+    -fx-font-size: 18px;
+    -fx-text-fill: #143963;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-weight: bold;
+}
+
+/* Campos de entrada azulados */
+.text-field, .text-area {
+    -fx-font-size: 17px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #b3d0e7;
+    -fx-background-color: #f4faff;
+    -fx-padding: 8;
+}

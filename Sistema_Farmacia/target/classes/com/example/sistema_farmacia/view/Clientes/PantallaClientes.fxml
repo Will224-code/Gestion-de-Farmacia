@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="18"
+      alignment="TOP_LEFT"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.sistema_farmacia.controller.controladores.PantallaClientesController"
+      stylesheets="@../estilos/EstilosClientes.css"
+      VBox.vgrow="ALWAYS"
+      style="-fx-padding: 55 0 0 350;">
+    <!-- Menú interno -->
+    <HBox spacing="14" alignment="CENTER_LEFT">
+        <Button fx:id="btnAgregar" text="Agregar" />
+        <Button fx:id="btnListar" text="Listar" />
+    </HBox>
+    <!-- Área caja central, azul/celeste y alineada a la izquierda -->
+    <VBox fx:id="areaSubpagina"
+          styleClass="area-subpagina"
+          alignment="CENTER_LEFT"
+          VBox.vgrow="ALWAYS"
+          prefWidth="800"
+          prefHeight="600">
+        <GridPane fx:id="formularioAgregar"
+                  hgap="16" vgap="22"
+                  alignment="CENTER">
+            <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Label text="Dirección:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtDireccion" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label text="Número de contacto:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtNumeroContacto" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Label text="Cliente amigo:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <CheckBox fx:id="chkClienteAmigo" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <Label text="Tipo de cliente:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cmbTipoCliente" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            <Label text="Porcentaje de descuento:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtDescuento" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <Button fx:id="btnAceptar" text="Agregar" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        </GridPane>
+    </VBox>
+</VBox>

@@ -1,0 +1,42 @@
+/* Menú elegante y minimalista */
+.hbox {
+    -fx-background-color: transparent;
+    -fx-padding: 18 18 18 18;
+}
+
+/* Botón tipo label, elegante */
+.button.menu-superior {
+    -fx-background-color: transparent;
+    -fx-text-fill: #355c91;
+    -fx-font-size: 20px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 6 24 6 24;
+    -fx-min-width: 110px;
+    -fx-underline: false;
+    -fx-effect: none;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s;
+}
+
+/* Hover: subrayado y color animado */
+.button.menu-superior:hover {
+    -fx-text-fill: #3a7bd5;
+    -fx-underline: true;
+    -fx-background-color: rgba(58,123,213,0.09);  /* Muy sutil */
+    -fx-effect: dropshadow(gaussian, #99c5ff, 3, 0.14, 0, 1.5);
+}
+
+/* Botón presionado: color oscuro */
+.button.menu-superior:pressed {
+    -fx-text-fill: #183367;
+    -fx-background-color: rgba(58,123,213,0.19);
+}
+
+.fondo-principal {
+    -fx-background-color: #f7fafd;
+    -fx-effect: dropshadow(gaussian, #6c94b3, 18, 0.13, 0, 6);
+}
