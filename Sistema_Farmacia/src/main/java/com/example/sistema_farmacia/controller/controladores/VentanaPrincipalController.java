@@ -3,6 +3,7 @@ package com.example.sistema_farmacia.controller.controladores;
 import com.example.sistema_farmacia.model.clasesdata.CategoriasDB;
 import com.example.sistema_farmacia.model.clasesdata.ClientesDB;
 import com.example.sistema_farmacia.model.clasesdata.ProductosDB;
+import com.example.sistema_farmacia.model.clasesdata.VentasDB;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +17,8 @@ public class VentanaPrincipalController {
 
     private final CategoriasDB categoriasDB = new CategoriasDB();
     private final ClientesDB clientesDB = new ClientesDB();
-    private final ProductosDB productosDB = new ProductosDB(); // <- Nueva instancia compartida
+    private final ProductosDB productosDB = new ProductosDB();
+    private final VentasDB ventasDB = new VentasDB(); // NUEVO
 
     @FXML
     public void initialize() {
@@ -28,7 +30,8 @@ public class VentanaPrincipalController {
             menuController.setVentanaPrincipalController(this);
             rootPane.setTop(menu);
 
-            mostrarPantalla("/com/example/sistema_farmacia/view/categorias/PantallaCategorias.fxml");
+            // Ahora muestra ventas como pantalla principal
+            mostrarPantalla("/com/example/sistema_farmacia/view/Ventas/PantallaVentas.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +53,14 @@ public class VentanaPrincipalController {
             if (rutaFXML.endsWith("PantallaProductos.fxml")) {
                 PantallaProductosController controller = loader.getController();
                 controller.setProductosDB(productosDB);
-                controller.setCategoriasDB(categoriasDB); // <- ¡Clave!
+                controller.setCategoriasDB(categoriasDB);
+            }
+            if (rutaFXML.endsWith("PantallaVentas.fxml")) {
+                PantallaVentasController controller = loader.getController();
+                controller.setProductosDB(productosDB);
+                controller.setClientesDB(clientesDB);
+                controller.setVentasDB(ventasDB);
+                controller.setCategoriasDB(categoriasDB);
             }
             contenidoCentral.getChildren().setAll(pantalla);
         } catch (Exception e) {
@@ -58,3 +68,4 @@ public class VentanaPrincipalController {
         }
     }
 }
+

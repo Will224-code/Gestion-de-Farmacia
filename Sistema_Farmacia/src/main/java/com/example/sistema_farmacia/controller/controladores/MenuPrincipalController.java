@@ -13,10 +13,8 @@ public class MenuPrincipalController {
     @FXML private Button btnReportes;
     @FXML private Button btnUsuariosSesion;
 
-    // Referencia al controlador principal (VentanaPrincipalController)
     private VentanaPrincipalController ventanaPrincipalController;
 
-    // Este método será llamado POR el controlador principal tras cargar el menú con FXMLLoader
     public void setVentanaPrincipalController(VentanaPrincipalController ref) {
         this.ventanaPrincipalController = ref;
     }
@@ -34,34 +32,28 @@ public class MenuPrincipalController {
 
     private void navegarAVentas() {
         if (ventanaPrincipalController != null)
-            ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/ventas/PantallaVentas.fxml");
+            ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/Ventas/PantallaVentas.fxml");
     }
-
     private void navegarACategorias() {
         if (ventanaPrincipalController != null)
             ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/categorias/PantallaCategorias.fxml");
     }
-
     private void navegarAClientes() {
         if (ventanaPrincipalController != null)
             ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/clientes/PantallaClientes.fxml");
     }
-
     private void navegarAProductos() {
         if (ventanaPrincipalController != null)
             ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/productos/PantallaProductos.fxml");
     }
-
     private void navegarARecibos() {
         if (ventanaPrincipalController != null)
             ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/recibos/PantallaRecibos.fxml");
     }
-
     private void navegarAReportes() {
         if (ventanaPrincipalController != null)
             ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/reportes/PantallaReportes.fxml");
     }
-
     private void navegarAUsuariosSesion() {
         if (ventanaPrincipalController != null)
             ventanaPrincipalController.mostrarPantalla("/com/example/sistema_farmacia/view/usuarios/PantallaUsuariosSesion.fxml");

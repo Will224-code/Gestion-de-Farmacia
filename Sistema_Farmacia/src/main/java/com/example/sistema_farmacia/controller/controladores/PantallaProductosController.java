@@ -1,5 +1,11 @@
 package com.example.sistema_farmacia.controller.controladores;
 
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesPrincipales.CampoVacioException;
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesPrincipales.DatoNoNumericoException;
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesPrincipales.DatoNegativoException;
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesPrincipales.DuplicadoException;
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesProductos.FechaCaducidadException;
+import com.example.sistema_farmacia.controller.verificacionDatos.Verificador;
 import com.example.sistema_farmacia.model.clasesdata.CategoriasDB;
 import com.example.sistema_farmacia.model.clasesdata.ProductosDB;
 import com.example.sistema_farmacia.model.clasesplantillas.Categoria;
@@ -9,14 +15,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class PantallaProductosController {
+public class PantallaProductosController extends ControladorBase {
 
     @FXML private Button btnAgregar, btnListar;
     @FXML private VBox areaSubpagina;
@@ -43,7 +48,7 @@ public class PantallaProductosController {
     public void initialize() {
         btnAgregar.setOnAction(e -> mostrarAgregar());
         btnListar.setOnAction(e -> mostrarListar());
-        mostrarAgregar(); // Por defecto muestra "Agregar"
+        mostrarAgregar();
     }
 
     //------------ SUBPÁGINA AGREGAR --------------//
@@ -81,7 +86,6 @@ public class PantallaProductosController {
         areaSubpagina.getChildren().setAll(formularioAgregarProducto);
     }
 
-    // Carga los checkboxes de categorías
     private void cargarCategoriasCheck() {
         if (categoriasDB != null && boxCheckCategorias != null) {
             boxCheckCategorias.getChildren().clear();
@@ -93,49 +97,78 @@ public class PantallaProductosController {
         }
     }
 
-    // Agrega el producto tomado de los checkboxes
+    /**
+     * Agrega el producto validando todos los campos
+     */
     private void agregarProductoCheck() {
-        String nombre = txtNombre.getText().trim();
-        String descripcion = txtDescripcion.getText().trim();
-        String codigo = txtCodigo.getText().trim();
-        LocalDate caducidad = dpCaducidad.getValue();
-        double precio, precioVenta;
-        int unidades;
+        try {
+            // 1. Obtener datos
+            String nombre = txtNombre.getText().trim();
+            String descripcion = txtDescripcion.getText().trim();
+            String codigo = txtCodigo.getText().trim();
+            LocalDate caducidad = dpCaducidad.getValue();
+            String precioTexto = txtPrecio.getText().trim();
+            String precioVentaTexto = txtPrecioVenta.getText().trim();
+            String unidadesTexto = txtUnidades.getText().trim();
 
-        try { precio = Double.parseDouble(txtPrecio.getText().trim()); }
-        catch (Exception ex) { mostrarMensaje("Precio normal inválido"); return; }
-        try { precioVenta = Double.parseDouble(txtPrecioVenta.getText().trim()); }
-        catch (Exception ex) { mostrarMensaje("Precio venta especial inválido"); return; }
-        try { unidades = Integer.parseInt(txtUnidades.getText().trim()); }
-        catch (Exception ex) { mostrarMensaje("Unidades debe ser entero"); return; }
+            // 2. Validaciones básicas
+            Verificador.verificarNoVacio(nombre, "nombre");
+            Verificador.verificarNoVacio(descripcion, "descripción");
+            Verificador.verificarNoVacio(codigo, "código");
 
-        if (nombre.isEmpty() || descripcion.isEmpty() || codigo.isEmpty() || caducidad == null) {
-            mostrarMensaje("Completa todos los campos obligatorios.");
-            return;
-        }
-        if (caducidad.isBefore(LocalDate.now())) {
-            mostrarMensaje("La fecha de caducidad debe ser mayor a la actual.");
-            return;
-        }
-
-        ArrayList<Categoria> categoriasProducto = new ArrayList<>();
-        for (javafx.scene.Node nodo : boxCheckCategorias.getChildren()) {
-            if (nodo instanceof CheckBox cb && cb.isSelected()) {
-                categoriasProducto.add((Categoria) cb.getUserData());
+            if (caducidad == null) {
+                throw new CampoVacioException("La fecha de caducidad es requerida");
             }
+
+            Verificador.verificarNoVacio(precioTexto, "precio normal");
+            Verificador.verificarNoVacio(precioVentaTexto, "precio venta especial");
+            Verificador.verificarNoVacio(unidadesTexto, "unidades disponibles");
+
+            // 3. Validar tipos numéricos
+            Verificador.verificarNumerico(precioTexto, "precio normal");
+            Verificador.verificarNumerico(precioVentaTexto, "precio venta especial");
+            Verificador.verificarEntero(unidadesTexto, "unidades disponibles");
+
+            double precio = Double.parseDouble(precioTexto);
+            double precioVenta = Double.parseDouble(precioVentaTexto);
+            int unidades = Integer.parseInt(unidadesTexto);
+
+            // 4. Validar valores positivos
+            Verificador.verificarPositivo(precio, "precio normal");
+            Verificador.verificarPositivo(precioVenta, "precio venta especial");
+            Verificador.verificarPositivo(unidades, "unidades disponibles");
+
+            // 5. Validar fecha de caducidad
+            Verificador.verificarFechaCaducidad(caducidad);
+
+            // 6. Verificar duplicado de código
+            boolean existe = productosDB.getListaProductos().containsKey(codigo);
+            Verificador.verificarDuplicado(existe, "código de producto", codigo);
+
+            // 7. Obtener categorías seleccionadas
+            ArrayList<Categoria> categoriasProducto = new ArrayList<>();
+            for (javafx.scene.Node nodo : boxCheckCategorias.getChildren()) {
+                if (nodo instanceof CheckBox cb && cb.isSelected()) {
+                    categoriasProducto.add((Categoria) cb.getUserData());
+                }
+            }
+            if (categoriasProducto.isEmpty() && categoriasDB != null) {
+                categoriasProducto.add(categoriasDB.getCategoriaDefault());
+            }
+
+            // 8. Crear y agregar producto
+            Producto nuevo = new Producto(nombre, descripcion, caducidad, precio, precioVenta, unidades, codigo);
+            nuevo.setCategoria(categoriasProducto);
+            productosDB.agregarProducto(nuevo);
+
+            mostrarExito("Producto agregado correctamente");
+            limpiarFormularioCheck();
+            cargarCategoriasCheck();
+
+        } catch (CampoVacioException | DatoNoNumericoException | DatoNegativoException |
+                 FechaCaducidadException | DuplicadoException e) {
+            mostrarAlertaError(e.getMessage());
         }
-        if (categoriasProducto.isEmpty() && categoriasDB != null) {
-            categoriasProducto.add(categoriasDB.getCategoriaDefault());
-        }
-
-        Producto nuevo = new Producto(nombre, descripcion, caducidad, precio, precioVenta, unidades, codigo);
-        nuevo.setCategoria(categoriasProducto);
-
-        productosDB.agregarProducto(nuevo);
-
-        mostrarMensaje("Producto agregado correctamente.");
-        limpiarFormularioCheck();
-        cargarCategoriasCheck();
     }
 
     private void limpiarFormularioCheck() {
@@ -184,7 +217,6 @@ public class PantallaProductosController {
             TableColumn<Producto, String> colStock = new TableColumn<>("Stock");
             colStock.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getUnidadesExi())));
 
-            // --- OPCIONES original ---
             TableColumn<Producto, Void> colOpciones = new TableColumn<>("Opciones");
             colOpciones.setCellFactory(tc -> new TableCell<>() {
                 private final Button btnModificar = new Button("Modificar");
@@ -216,7 +248,6 @@ public class PantallaProductosController {
         refrescarTabla();
         areaSubpagina.getChildren().setAll(boxListado);
     }
-
 
     private void buscarProducto() {
         if (productosDB == null) return;
@@ -270,57 +301,121 @@ public class PantallaProductosController {
 
         dialogo.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.OK) {
-                boolean cambiado = false;
-                if (!campoNombre.getText().trim().equals(producto.getNombre())) {
-                    producto.setNombre(campoNombre.getText().trim()); cambiado = true;
-                }
-                if (!campoDescripcion.getText().trim().equals(producto.getDescripcion())) {
-                    producto.setDescripcion(campoDescripcion.getText().trim()); cambiado = true;
-                }
-                if (!campoCodigo.getText().trim().equals(producto.getCodigo())) {
-                    productosDB.eliminarProducto(producto.getCodigo());
-                    producto.setCodigo(campoCodigo.getText().trim()); cambiado = true;
-                }
-                try {
-                    double precio = Double.parseDouble(campoPrecio.getText().trim());
-                    if (precio != producto.getPrecio()) { producto.setPrecio(precio); cambiado = true; }
-                } catch (NumberFormatException ignored) {}
-                try {
-                    double precioVenta = Double.parseDouble(campoPrecioVenta.getText().trim());
-                    if (precioVenta != producto.getPrecioVenta()) { producto.setPrecioVenta(precioVenta); cambiado = true; }
-                } catch (NumberFormatException ignored) {}
-                try {
-                    int unidades = Integer.parseInt(campoUnidades.getText().trim());
-                    if (unidades != producto.getUnidadesExi()) { producto.setUnidadesExi(unidades); cambiado = true; }
-                } catch (NumberFormatException ignored) {}
-                if (campoCaducidad.getValue() != null && !campoCaducidad.getValue().equals(producto.getFechaCaducidad())) {
-                    producto.setFechaCaducidad(campoCaducidad.getValue()); cambiado = true;
-                }
-                if (cambiado) {
-                    productosDB.agregarProducto(producto);
-                    refrescarTabla();
-                }
+                modificarProducto(producto, campoNombre.getText(), campoDescripcion.getText(),
+                        campoCodigo.getText(), campoPrecio.getText(), campoPrecioVenta.getText(),
+                        campoUnidades.getText(), campoCaducidad.getValue());
             }
         });
+    }
+
+    /**
+     * Modifica un producto validando los nuevos datos
+     */
+    private void modificarProducto(Producto producto, String nuevoNombre, String nuevaDescripcion,
+                                   String nuevoCodigo, String nuevoPrecio, String nuevoPrecioVenta,
+                                   String nuevasUnidades, LocalDate nuevaCaducidad) {
+        try {
+            boolean cambiado = false;
+
+            // Validar y actualizar nombre
+            if (!nuevoNombre.trim().equals(producto.getNombre())) {
+                Verificador.verificarNoVacio(nuevoNombre, "nombre");
+                producto.setNombre(nuevoNombre.trim());
+                cambiado = true;
+            }
+
+            // Validar y actualizar descripción
+            if (!nuevaDescripcion.trim().equals(producto.getDescripcion())) {
+                Verificador.verificarNoVacio(nuevaDescripcion, "descripción");
+                producto.setDescripcion(nuevaDescripcion.trim());
+                cambiado = true;
+            }
+
+            // Validar y actualizar código (eliminar viejo si cambia)
+            if (!nuevoCodigo.trim().equals(producto.getCodigo())) {
+                Verificador.verificarNoVacio(nuevoCodigo, "código");
+                boolean existe = productosDB.getListaProductos().containsKey(nuevoCodigo.trim());
+                Verificador.verificarDuplicado(existe, "código de producto", nuevoCodigo);
+                productosDB.eliminarProducto(producto.getCodigo());
+                producto.setCodigo(nuevoCodigo.trim());
+                cambiado = true;
+            }
+
+            // Validar y actualizar precio
+            if (!nuevoPrecio.trim().isEmpty()) {
+                Verificador.verificarNumerico(nuevoPrecio, "precio normal");
+                double precio = Double.parseDouble(nuevoPrecio.trim());
+                Verificador.verificarPositivo(precio, "precio normal");
+                if (precio != producto.getPrecio()) {
+                    producto.setPrecio(precio);
+                    cambiado = true;
+                }
+            }
+
+            // Validar y actualizar precio venta
+            if (!nuevoPrecioVenta.trim().isEmpty()) {
+                Verificador.verificarNumerico(nuevoPrecioVenta, "precio venta");
+                double precioVenta = Double.parseDouble(nuevoPrecioVenta.trim());
+                Verificador.verificarPositivo(precioVenta, "precio venta");
+                if (precioVenta != producto.getPrecioVenta()) {
+                    producto.setPrecioVenta(precioVenta);
+                    cambiado = true;
+                }
+            }
+
+            // Validar y actualizar unidades
+            if (!nuevasUnidades.trim().isEmpty()) {
+                Verificador.verificarEntero(nuevasUnidades, "unidades");
+                int unidades = Integer.parseInt(nuevasUnidades.trim());
+                Verificador.verificarPositivo(unidades, "unidades");
+                if (unidades != producto.getUnidadesExi()) {
+                    producto.setUnidadesExi(unidades);
+                    cambiado = true;
+                }
+            }
+
+            // Validar y actualizar fecha de caducidad
+            if (nuevaCaducidad != null && !nuevaCaducidad.equals(producto.getFechaCaducidad())) {
+                Verificador.verificarFechaCaducidad(nuevaCaducidad);
+                producto.setFechaCaducidad(nuevaCaducidad);
+                cambiado = true;
+            }
+
+            if (cambiado) {
+                productosDB.agregarProducto(producto);
+                mostrarExito("Producto modificado exitosamente");
+                refrescarTabla();
+            } else {
+                mostrarMensaje("No se realizaron cambios");
+            }
+
+        } catch (CampoVacioException | DatoNoNumericoException | DatoNegativoException |
+                 FechaCaducidadException | DuplicadoException e) {
+            mostrarAlertaError(e.getMessage());
+        }
     }
 
     private void mostrarEliminar(Producto producto) {
-        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
-        alerta.setTitle("Eliminar Producto");
-        alerta.setHeaderText("¿Seguro que quieres eliminar?");
-        alerta.setContentText("Producto: " + producto.getNombre());
-        alerta.showAndWait().ifPresent(bt -> {
-            if (bt == ButtonType.OK) {
-                productosDB.eliminarProducto(producto.getCodigo());
-                refrescarTabla();
-            }
-        });
+        boolean confirmar = mostrarConfirmacion(
+                "¿Seguro que quieres eliminar este producto?\n\n" +
+                        "Producto: " + producto.getNombre()
+        );
+
+        if (confirmar) {
+            eliminarProducto(producto);
+        }
     }
 
-    private void mostrarMensaje(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Mensaje");
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    /**
+     * Elimina un producto
+     */
+    private void eliminarProducto(Producto producto) {
+        try {
+            productosDB.eliminarProducto(producto.getCodigo());
+            mostrarExito("Producto eliminado exitosamente");
+            refrescarTabla();
+        } catch (Exception e) {
+            mostrarAlertaError("Error al eliminar: " + e.getMessage());
+        }
     }
 }

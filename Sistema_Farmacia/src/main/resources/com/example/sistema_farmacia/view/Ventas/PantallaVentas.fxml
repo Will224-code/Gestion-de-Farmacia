@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.sistema_farmacia.controller.controladores.PantallaVentasController">
+
+    <!-- Buscador superior -->
+    <top>
+        <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 15;">
+            <Label text="Código producto:"/>
+            <TextField fx:id="txtCodigoBuscar" promptText="Ej: 12345..." />
+            <Button fx:id="btnAgregarProducto" text="Agregar"/>
+        </HBox>
+    </top>
+
+    <!-- Tabla central con carrito -->
+    <center>
+        <VBox spacing="10" style="-fx-padding: 12;">
+            <TableView fx:id="tablaCarrito" prefHeight="320">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="80"/>
+                    <TableColumn fx:id="colNombre" text="Nombre" />
+                    <TableColumn fx:id="colDescripcion" text="Descripción"/>
+                    <TableColumn fx:id="colCategorias" text="Categorías"/>
+                    <TableColumn fx:id="colCantidad" text="Cantidad"/>
+                    <TableColumn fx:id="colStock" text="Stock"/>
+                    <TableColumn fx:id="colPrecioUnitario" text="P. Unitario"/>
+                    <TableColumn fx:id="colPrecioTotal" text="Total"/>
+                    <TableColumn fx:id="colAcciones" text=""/>
+                </columns>
+            </TableView>
+            <HBox alignment="CENTER_RIGHT" spacing="16">
+                <Label text="Total venta:"/>
+                <Label fx:id="lblTotal" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <!-- Barra inferior de acciones -->
+    <bottom>
+        <HBox spacing="18" alignment="CENTER" style="-fx-padding: 15;">
+            <Button fx:id="btnVender" text="Vender"/>
+            <Button fx:id="btnHistorial" text="Historial De Ventas"/>
+        </HBox>
+    </bottom>
+</BorderPane>

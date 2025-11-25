@@ -1,5 +1,8 @@
 package com.example.sistema_farmacia.controller.controladores;
 
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesPrincipales.CampoVacioException;
+import com.example.sistema_farmacia.controller.Excepciones.excepcionesPrincipales.DuplicadoException;
+import com.example.sistema_farmacia.controller.verificacionDatos.Verificador;
 import com.example.sistema_farmacia.model.clasesdata.CategoriasDB;
 import com.example.sistema_farmacia.model.clasesplantillas.Categoria;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,9 +15,8 @@ import javafx.fxml.FXML;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class PantallaCategoriasController {
+public class PantallaCategoriasController extends ControladorBase {
 
     @FXML private Button btnAgregar;
     @FXML private Button btnListar;
@@ -24,10 +26,8 @@ public class PantallaCategoriasController {
     @FXML private TextArea txtDescripcion;
     @FXML private Button btnAceptar;
 
-    // Referencia al modelo de colección
     private CategoriasDB categoriasDB;
 
-    // Inyectada por el controlador principal (método set)
     public void setCategoriasDB(CategoriasDB categoriasDB) {
         this.categoriasDB = categoriasDB;
     }
@@ -46,16 +46,40 @@ public class PantallaCategoriasController {
         areaSubpagina.getChildren().add(formularioAgregar);
     }
 
+    /**
+     * Agrega una nueva categoría validando los datos con el Verificador
+     */
     private void agregarCategoria() {
-        String nombre = txtNombre.getText().trim();
-        String descripcion = txtDescripcion.getText().trim();
-        if (nombre.isEmpty()) {
-            mostrarMensaje("El nombre de la categoría no puede estar vacío.");
-            return;
+        try {
+            // 1. Obtener datos del formulario
+            String nombre = txtNombre.getText().trim();
+            String descripcion = txtDescripcion.getText().trim();
+
+            // 2. Validar usando el Verificador
+            Verificador.verificarNoVacio(nombre, "nombre de la categoría");
+
+            // 3. Verificar que no exista duplicado
+            boolean existe = categoriasDB.getListaCategorias().containsKey(nombre);
+            Verificador.verificarDuplicado(existe, "categoría", nombre);
+
+            // 4. Si todo está bien, crear y agregar
+            Categoria nueva = new Categoria(nombre, descripcion);
+            categoriasDB.agregarCategoria(nueva);
+
+            // 5. Mostrar mensaje de éxito y limpiar
+            mostrarExito("Categoría agregada exitosamente:\n" + nombre);
+            limpiarFormulario();
+
+        } catch (CampoVacioException | DuplicadoException e) {
+            // Capturar excepciones y mostrar error
+            mostrarAlertaError(e.getMessage());
         }
-        Categoria nueva = new Categoria(nombre, descripcion);
-        categoriasDB.agregarCategoria(nueva);
-        mostrarMensaje("Categoría agregada:\n" + nombre + "\n" + descripcion);
+    }
+
+    /**
+     * Limpia los campos del formulario
+     */
+    private void limpiarFormulario() {
         txtNombre.clear();
         txtDescripcion.clear();
     }
@@ -97,29 +121,37 @@ public class PantallaCategoriasController {
 
         tabla.getColumns().addAll(colNombre, colDescripcion, colOpciones);
 
-        // Obtiene la lista actual y la carga
+        // Cargar datos
         List<Categoria> todas = new ArrayList<>(categoriasDB.getListaCategorias().values());
         tabla.setItems(FXCollections.observableArrayList(todas));
 
-        // Filtro por nombre (insensible a mayúsculas/minúsculas)
-        btnBuscar.setOnAction(e -> {
-            String filtro = txtBuscar.getText().trim().toLowerCase();
-            if (filtro.isEmpty()) {
-                tabla.setItems(FXCollections.observableArrayList(categoriasDB.getListaCategorias().values()));
-            } else {
-                ObservableList<Categoria> filtradas = FXCollections.observableArrayList();
-                for (Categoria cat : categoriasDB.getListaCategorias().values()) {
-                    if (cat.getCategoriaNombre().toLowerCase().contains(filtro)) {
-                        filtradas.add(cat);
-                    }
-                }
-                tabla.setItems(filtradas);
-            }
-        });
+        // Filtro por nombre
+        btnBuscar.setOnAction(e -> filtrarCategorias(txtBuscar.getText(), tabla));
 
         VBox listado = new VBox(12, buscador, tabla);
         listado.setPadding(new Insets(10));
         areaSubpagina.getChildren().add(listado);
+    }
+
+    /**
+     * Filtra las categorías según el texto de búsqueda
+     */
+    private void filtrarCategorias(String textoBusqueda, TableView<Categoria> tabla) {
+        String filtro = textoBusqueda.trim().toLowerCase();
+
+        if (filtro.isEmpty()) {
+            // Mostrar todas si no hay filtro
+            tabla.setItems(FXCollections.observableArrayList(categoriasDB.getListaCategorias().values()));
+        } else {
+            // Filtrar por nombre
+            ObservableList<Categoria> filtradas = FXCollections.observableArrayList();
+            for (Categoria cat : categoriasDB.getListaCategorias().values()) {
+                if (cat.getCategoriaNombre().toLowerCase().contains(filtro)) {
+                    filtradas.add(cat);
+                }
+            }
+            tabla.setItems(filtradas);
+        }
     }
 
     /** --- MODIFICAR --- **/
@@ -129,6 +161,7 @@ public class PantallaCategoriasController {
 
         GridPane grid = new GridPane();
         grid.setVgap(10); grid.setHgap(12); grid.setPadding(new Insets(20));
+
         TextField nuevoNombre = new TextField(cat.getCategoriaNombre());
         TextArea nuevaDescripcion = new TextArea(cat.getDescripcion());
 
@@ -143,36 +176,65 @@ public class PantallaCategoriasController {
         dialog.setResultConverter(bt -> bt);
         dialog.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.OK) {
-                String nombreViejo = cat.getCategoriaNombre();
-                String nombre = nuevoNombre.getText().trim();
-                String desc = nuevaDescripcion.getText().trim();
-                if (!nombre.isEmpty()) cat.setCategoriaNombre(nombre);
-                if (!desc.isEmpty()) cat.setDescripcion(desc);
-
-                categoriasDB.modificarCategoria(nombreViejo, cat);
-                mostrarListar();
+                modificarCategoria(cat, nuevoNombre.getText(), nuevaDescripcion.getText());
             }
         });
+    }
+
+    /**
+     * Modifica una categoría validando los datos
+     */
+    private void modificarCategoria(Categoria categoria, String nuevoNombre, String nuevaDescripcion) {
+        try {
+            // Validar nuevo nombre
+            Verificador.verificarNoVacio(nuevoNombre, "nombre");
+
+            String nombreViejo = categoria.getCategoriaNombre();
+            String nombreNuevo = nuevoNombre.trim();
+
+            // Si cambió el nombre, verificar que no exista otro con ese nombre
+            if (!nombreViejo.equalsIgnoreCase(nombreNuevo)) {
+                boolean existe = categoriasDB.getListaCategorias().containsKey(nombreNuevo);
+                Verificador.verificarDuplicado(existe, "categoría", nombreNuevo);
+                categoria.setCategoriaNombre(nombreNuevo);
+            }
+
+            // Actualizar descripción
+            categoria.setDescripcion(nuevaDescripcion.trim());
+
+            // Guardar cambios
+            categoriasDB.modificarCategoria(nombreViejo, categoria);
+
+            mostrarExito("Categoría modificada exitosamente");
+            mostrarListar();
+
+        } catch (CampoVacioException | DuplicadoException e) {
+            mostrarAlertaError(e.getMessage());
+        }
     }
 
     /** --- ELIMINAR --- **/
     private void mostrarEliminar(Categoria cat) {
-        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
-        alerta.setHeaderText("¿Seguro que quieres eliminar?");
-        alerta.setContentText("Categoría: " + cat.getCategoriaNombre());
-        alerta.showAndWait().ifPresent(bt -> {
-            if (bt == ButtonType.OK) {
-                categoriasDB.eliminarCategoria(cat.getCategoriaNombre());
-                mostrarListar();
-            }
-        });
+        boolean confirmar = mostrarConfirmacion(
+                "¿Seguro que quieres eliminar la categoría?\n\n" +
+                        "Categoría: " + cat.getCategoriaNombre()
+        );
+
+        if (confirmar) {
+            eliminarCategoria(cat);
+        }
     }
 
-    /** --- MENSAJE --- **/
-    private void mostrarMensaje(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Mensaje del sistema");
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    /**
+     * Elimina una categoría
+     */
+    private void eliminarCategoria(Categoria categoria) {
+        try {
+            categoriasDB.eliminarCategoria(categoria.getCategoriaNombre());
+            mostrarExito("Categoría eliminada exitosamente");
+            mostrarListar();
+        } catch (Exception e) {
+            mostrarAlertaError("Error al eliminar: " + e.getMessage());
+        }
     }
 }
